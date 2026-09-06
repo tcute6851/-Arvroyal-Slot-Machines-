@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>🎰  ArvRoyal Spin - Casino Slot</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+ <link rel="stylesheet" href="style.css" />    
+</head>
+
+<body>
+
+    <!-- ════════════════════════════════════════════════
+    SLOT MACHINE
+    ════════════════════════════════════════════════ -->
+    <div class="slot-machine">
+
+        <!-- Corner gems -->
+        <span class="corner-gem tl"></span>
+        <span class="corner-gem tr"></span>
+        <span class="corner-gem bl"></span>
+        <span class="corner-gem br"></span>
+
+        <!-- ─── TOP BAR ─── -->
+        <div class="cabinet-top">
+            <div class="title">
+                <span class="icon">♛</span>  ArvRoyal Spin
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <span class="label">BALANCE</span>
+                    <span class="value balance" id="balanceDisplay"><span class="currency">$</span>1000</span>
+                </div>
+                <div class="stat">
+                    <span class="label">WIN</span>
+                    <span class="value win" id="winDisplay"><span class="currency">$</span>0</span>
+                </div>
+                <div class="stat" style="flex-direction: row; gap: 6px; align-items: center; padding-left: 4px;">
+                    <button class="mute-btn" id="muteBtn" aria-label="Toggle sound">🔊</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── REELS AREA ─── -->
+        <div class="reels-area">
+            <div class="led-strip top"></div>
+            <div class="led-strip bottom"></div>
+
+            <div class="reel-frame">
+                <div class="reel" id="reel0">
+                    <div class="reel-strip" id="strip0"></div>
+                </div>
+                <div class="reel" id="reel1">
+                    <div class="reel-strip" id="strip1"></div>
+                </div>
+                <div class="reel" id="reel2">
+                    <div class="reel-strip" id="strip2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── CONTROLS ─── -->
+        <div class="controls">
+            <div class="bet-section">
+                <button class="bet-btn" id="betDown" aria-label="Decrease bet">◀</button>
+                <span class="bet-label">BET</span>
+                <span class="bet-display" id="betDisplay">10</span>
+                <button class="bet-btn" id="betUp" aria-label="Increase bet">▶</button>
+                <button class="max-btn" id="maxBetBtn">MAX</button>
+            </div>
+            <button class="spin-btn" id="spinBtn">
+                <span class="spin-icon">🎰</span> SPIN
+            </button>
+        </div>
+
+        <!-- ─── MESSAGE ─── -->
+        <div class="message-area">
+            <div class="message info" id="messageDisplay">✨ Ready to play</div>
+        </div>
+
+        <!-- ─── BOTTOM PANEL ─── -->
+        <div class="bottom-panel">
+            <div class="history-box">
+                <div class="history-header">
+                    <span>📜 HISTORY</span>
+                    <button class="clear-btn" id="clearHistoryBtn" aria-label="Clear history">✕</button>
+                </div>
+                <ul class="history-list" id="historyList">
+                    <li class="empty">No spins yet</li>
+                </ul>
+            </div>
+            <div class="db-buttons">
+                <button class="topup-btn" id="topUpBtn">➕ Top Up</button>
+                <input type="file" id="fileInput" accept=".json" />
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════
+    AUDIO (unchanged – keep as is)
+    ════════════════════════════════════════════════ -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="bgmusicslotmachine.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="spinningSound" loop preload="auto">
+        <source src="Spinning-slotmachine.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="jackpotSound" preload="auto">
+        <source src="Slot-Machine-Jackpot-Sound-Effect.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- ════════════════════════════════════════════════
+    JAVASCRIPT – keep your existing backend
+    (just ensure IDs match – they do)
+    ════════════════════════════════════════════════ -->
+    <script src="script.js">
+        // Your existing JavaScript goes here.
+        // All IDs and classes are preserved.
+    </script>
+
+</body>
+</html>
