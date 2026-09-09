@@ -102,7 +102,40 @@
                 opacity: 0.6;
             }
         }
-
+          /* ── ROULETTE BUTTON (inline design) ── */
+        .roulette-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: 20px;
+            padding: 6px 18px 6px 14px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 2px 12px rgba(231, 76, 60, 0.25);
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+        }
+        .roulette-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 24px rgba(231, 76, 60, 0.4);
+            background: linear-gradient(145deg, #ff6b6b, #e74c3c);
+        }
+        .roulette-btn:active {
+            transform: scale(0.94);
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+        }
+        .roulette-btn .roulette-icon {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
         /* ═══════════════════════════════════════════════
                SLOT MACHINE CABINET
                ═══════════════════════════════════════════════ */
