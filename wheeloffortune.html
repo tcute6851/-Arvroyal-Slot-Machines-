@@ -414,18 +414,18 @@ const TAU = Math.PI * 2;
 
 /* 12 segments — classic casino look, RTP ≈ 95.8% */
 const SEGMENTS = [
-  { label:'2x',   value:2,      color:'#8b1a1a', text:'#fff3d0' },
-  { label:'LOSE', value:'lose', color:'#131318', text:'#c9c9d2' },
-  { label:'3x',   value:3,      color:'#131318', text:'#ffe98a' },
-  { label:'LOSE', value:'lose', color:'#8b1a1a', text:'#f5e0b0' },
-  { label:'2x',   value:2,      color:'#131318', text:'#fff3d0' },
-  { label:'LOSE', value:'lose', color:'#8b1a1a', text:'#f5e0b0' },
-  { label:'5x',   value:5,      color:'#0d3b66', text:'#d6f0ff' },
-  { label:'LOSE', value:'lose', color:'#8b1a1a', text:'#f5e0b0' },
-  { label:'2x',   value:2,      color:'#131318', text:'#fff3d0' },
-  { label:'LOSE', value:'lose', color:'#8b1a1a', text:'#f5e0b0' },
-  { label:'HALF', value:'half', color:'#0d3b66', text:'#c8ecff' },
-  { label:'LOSE', value:'lose', color:'#131318', text:'#c9c9d2' }
+  { label:'LOSE', value:'lose', color:'#3d0a0a', text:'#ffb8b8' }, // 0
+  { label:'2x',   value:2,      color:'#8b1a1a', text:'#fff3d0' }, // 1
+  { label:'5x',   value:5,      color:'#141118', text:'#fff3d0' }, // 2
+  { label:'10x',  value:10,     color:'#8b1a1a', text:'#fff3d0' }, // 3
+  { label:'20x',  value:20,     color:'#141118', text:'#ffe98a' }, // 4
+  { label:'30x',  value:30,     color:'#8b1a1a', text:'#fff3d0' }, // 5
+  { label:'HALF', value:'half', color:'#0d3b2e', text:'#d6ffe8' }, // 6
+  { label:'40x',  value:40,     color:'#141118', text:'#ffe98a' }, // 7
+  { label:'50x',  value:50,     color:'#8b1a1a', text:'#fff3d0' }, // 8
+  { label:'70x',  value:70,     color:'#141118', text:'#ffe98a' }, // 9
+  { label:'80x',  value:80,     color:'#8b1a1a', text:'#fff3d0' }, // 10
+  { label:'100x', value:100,    color:'#141118', text:'#ffd700' }  // 11
 ];
 const N = SEGMENTS.length;
 const SEG_ANGLE = TAU / N;
