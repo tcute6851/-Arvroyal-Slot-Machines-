@@ -1,10 +1,28 @@
 // ═══════════════════════════════════════════════════════════
 //  REALISTIC SLOT MACHINE – 8‑second spin duration
 //  Animation matches "Spinning-slotmachine.mp3" exactly.
+//  BALANCE is shared with wheeloffortune.html
 // ═══════════════════════════════════════════════════════════
 
 (() => {
     'use strict';
+
+    // ─── SHARED BALANCE (only thing shared with wheel) ────  // ← NEW
+    const SHARED_KEY = 'arvroyal_shared_balance';
+    function readSharedBalance(){
+        const raw = localStorage.getItem(SHARED_KEY);
+        if (raw === null){
+            localStorage.setItem(SHARED_KEY, '1000');
+            return 1000;
+        }
+        const n = parseFloat(raw);
+        return isFinite(n) ? Math.max(0, Math.floor(n)) : 1000;
+    }
+    function writeSharedBalance(v){
+        const n = Math.max(0, Math.floor(v));
+        localStorage.setItem(SHARED_KEY, String(n));
+        return n;
+    }
 
     // ─── SYMBOLS & PAYOUTS ──────────────────────────────
     const SYMBOLS = ['7️⃣', 'BAR', '🍒', '🍋', '🍊', '🍇', '🍉', '🍓', '🍑', '🍎'];
@@ -23,7 +41,7 @@
     };
 
     // ─── PRESET BET OPTIONS ──────────────────────────────
-    const BET_OPTIONS = [10, 50, 100, 200, 500, 1000, 2000, 5000,10000, 20000, 50000, 100000];
+    const BET_OPTIONS = [10, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000];
     let betIndex = 0;
     let isCustomBet = false;
 
@@ -172,23 +190,30 @@
                 }
                 if (!Array.isArray(db.history)) db.history = [];
                 if (db.history.length > 100) db.history = db.history.slice(-100);
-                return;
+            } else {
+                db = JSON.parse(JSON.stringify(DEFAULT_DB));
             }
-        } catch (_) {}
-        db = JSON.parse(JSON.stringify(DEFAULT_DB));
-        saveDB();
+        } catch (_) {
+            db = JSON.parse(JSON.stringify(DEFAULT_DB));
+        }
+        // ← CHANGED: always take the balance from the shared key
+        db.balance = readSharedBalance();
     }
 
     function saveDB() {
         try {
             localStorage.setItem('slotMachineDB', JSON.stringify(db));
         } catch (_) {}
+        // ← CHANGED: push balance to the shared key too
+        writeSharedBalance(db.balance);
         updateUI();
     }
 
     function resetDB() {
         if (!confirm('Reset all data?')) return;
         db = JSON.parse(JSON.stringify(DEFAULT_DB));
+        // ← CHANGED: also reset the shared balance
+        db.balance = writeSharedBalance(DEFAULT_DB.balance);
         saveDB();
         resetReelsToDefault();
         let defaultBet = db.settings.defaultBet || 10;
@@ -218,11 +243,13 @@
     }
 
     function exportDB() {
+        // ← CHANGED: snapshot the live shared balance into the export
+        db.balance = readSharedBalance();
         const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `slot_db_${new Date().toISOString().slice(0,10)}.json`;
+        a.download = `slot_db_${new Date().toISOString().slice(0, 10)}.json`;
         a.click();
         URL.revokeObjectURL(url);
     }
@@ -242,6 +269,8 @@
                 }
                 if (!Array.isArray(db.history)) db.history = [];
                 if (db.history.length > 100) db.history = db.history.slice(-100);
+                // ← CHANGED: push the imported balance into the shared key
+                db.balance = writeSharedBalance(db.balance);
                 saveDB();
                 resetReelsToDefault();
                 let defaultBet = db.settings.defaultBet || 10;
@@ -271,7 +300,7 @@
             return;
         }
         db.balance += amount;
-        saveDB();
+        saveDB();  // ← already pushes to shared key
         setMessage(`✅ Added $${formatCurrency(amount)}. New balance: $${formatCurrency(db.balance)}`, 'win');
         updateUI();
         if (currentBet > db.balance) {
@@ -337,14 +366,16 @@
         messageDisplay.textContent = text;
         messageDisplay.className = 'message ' + type;
     }
-clearHistoryBtn.addEventListener('click', () => {
-    if (!db || db.history.length === 0) return;
-    if (!confirm('Clear history?')) return;
-    db.history = [];
-    saveDB();
-    renderHistory();
-    setMessage('🗑️ History cleared', 'info');
-});
+
+    clearHistoryBtn.addEventListener('click', () => {
+        if (!db || db.history.length === 0) return;
+        if (!confirm('Clear history?')) return;
+        db.history = [];
+        saveDB();
+        renderHistory();
+        setMessage('🗑️ History cleared', 'info');
+    });
+
     // ─── BET CONTROLS ────────────────────────────────────
     function adjustBet(direction) {
         if (isSpinning) return;
@@ -414,6 +445,9 @@ clearHistoryBtn.addEventListener('click', () => {
         }
 
         db.balance -= currentBet;
+        // ← CHANGED: sync the deduction to the shared key immediately
+        writeSharedBalance(db.balance);
+
         isSpinning = true;
         currentWinAmount = 0;
         winDisplay.textContent = '0';
@@ -429,9 +463,6 @@ clearHistoryBtn.addEventListener('click', () => {
         const delays = [0, 150, 300];
 
         // ★★★ 8‑SECOND SPIN DURATIONS ★★★
-        // Reel 0: starts at 0ms, duration 8000ms → stops at 8000ms
-        // Reel 1: starts at 150ms, duration 7850ms → stops at 8000ms
-        // Reel 2: starts at 300ms, duration 7700ms → stops at 8000ms
         const durations = [8000, 7850, 7700];
 
         const spinPromises = resultSymbols.map((sym, i) => {
@@ -453,7 +484,6 @@ clearHistoryBtn.addEventListener('click', () => {
             winType = 'win';
             reelContainers.forEach(el => el.classList.add('winning'));
 
-            // 🎰 JACKPOT! – play special sound for 7️⃣
             if (resultSymbols[0] === '7️⃣') {
                 jackpotAudio.currentTime = 0;
                 jackpotAudio.play().catch(() => {});
@@ -511,7 +541,7 @@ clearHistoryBtn.addEventListener('click', () => {
         if (winType === 'win') db.totalWins += winAmount;
         else db.totalLosses += currentBet;
 
-        saveDB();
+        saveDB();  // ← pushes final balance to the shared key
         isSpinning = false;
         updateSpinButton();
         winDisplay.textContent = formatCurrency(currentWinAmount);
@@ -590,9 +620,39 @@ clearHistoryBtn.addEventListener('click', () => {
                 if (!isSpinning) spin();
             }
         });
+
+        // ← CHANGED: listen for balance changes coming from wheeloffortune.html
         window.addEventListener('storage', (e) => {
             if (e.key === 'slotMachineDB') {
                 loadDB();
+                updateUI();
+                updateSpinButton();
+            } else if (e.key === SHARED_KEY) {
+                const n = parseFloat(e.newValue);
+                if (isFinite(n) && db && !isSpinning) {
+                    db.balance = Math.max(0, Math.floor(n));
+                    try { localStorage.setItem('slotMachineDB', JSON.stringify(db)); } catch (_) {}
+                    updateUI();
+                    updateSpinButton();
+                }
+            }
+        });
+
+        // ← NEW: also re-read on focus, in case the wheel changed it while we were hidden
+        window.addEventListener('focus', () => {
+            if (!db || isSpinning) return;
+            const n = readSharedBalance();
+            if (n !== db.balance) {
+                db.balance = n;
+                updateUI();
+                updateSpinButton();
+            }
+        });
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState !== 'visible' || !db || isSpinning) return;
+            const n = readSharedBalance();
+            if (n !== db.balance) {
+                db.balance = n;
                 updateUI();
                 updateSpinButton();
             }
